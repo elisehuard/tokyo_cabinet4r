@@ -37,6 +37,7 @@ Why i developed this (example of use case): for scalable shortest path calculati
 Todo
 =====
 
+* test with Ruby 1.9
 * more elegant handling of opening and closing of file, without resorting to too much metaprogramming.
 * investigate use of Tokyo Tyrant.
 * transactions
