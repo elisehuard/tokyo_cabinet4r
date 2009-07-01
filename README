@@ -2,7 +2,7 @@ Tokyo-cabinet4r
 ==================
 
 Tokyo cabinet hash plugin for Rails.
-Subclassing TokyoCabinet4r allows the easy creation and usage of some Tokyo Cabinet functionalieties.
+Subclassing TokyoCabinet4r allows the easy creation and usage of some Tokyo Cabinet functionalities.
 - Tokyo Cabinet B+ tree (http://en.wikipedia.org/wiki/B%2B_tree)
 - Tokyo Cabinet table database API (arbitrary columns, usual key-value stores)
 (see http://tokyocabinet.sourceforge.net/index.html for more, but not implemented yet)
@@ -31,7 +31,7 @@ use generator
 script/generate tc_tdb shortest_path
 
 
-Why i developed this (example of use): for scalable shortest path calculation.
+Why i developed this (example of use case): for scalable shortest path calculation.
 
 
 Todo
