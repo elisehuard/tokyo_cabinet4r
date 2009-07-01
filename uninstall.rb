@@ -1,0 +1,3 @@
+# Uninstall hook code here
+# the only thing to do is to remove db/tokyo ...
+# on the other hand, this is a no-return move ... shall i do that ?

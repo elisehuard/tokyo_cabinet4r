@@ -1,0 +1,8 @@
+# BDB: http://tokyocabinet.sourceforge.net/rubydoc/#
+# use the methods of bdb to retrieve/manipulate data as you wish
+# one instance corresponds to a table stored in db/tokyo/
+# the methods are different then activerecord !
+# I kept it that way to highlight the fact that this is a key-value store, not a relational database
+
+class <%= model_name %> < TokyoCabinet4r::Bdb
+end

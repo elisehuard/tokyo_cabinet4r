@@ -1,0 +1,46 @@
+Tokyo-cabinet4r
+==================
+
+Tokyo cabinet hash plugin for Rails.
+Subclassing TokyoCabinet4r allows the easy creation and usage of some Tokyo Cabinet functionalieties.
+- Tokyo Cabinet B+ tree (http://en.wikipedia.org/wiki/B%2B_tree)
+- Tokyo Cabinet table database API (arbitrary columns, usual key-value stores)
+(see http://tokyocabinet.sourceforge.net/index.html for more, but not implemented yet)
+
+Install
+========
+Prerequisites:
+Install Tokyo Cabinet (source available at http://tokyocabinet.sourceforge.net/index.html).
+Install Tokyo Cabinet Ruby bindings (http://tokyocabinet.sourceforge.net/rubypkg/ - doc http://tokyocabinet.sourceforge.net/rubydoc/).
+(had to use build options --with-tokyocabinet-include= --with-tokyocabinet-lib= pointing to the source directory of tokyocabinet)
+
+install as a plugin for Rails.  Tested with Rails 2.3.2
+
+Example
+=======
+Btree:
+use generator
+script/generate tc_bdb phone_number
+
+this creates a subclass of TokyoCabinet4r::BDB, which can be used in rails.  The db file is created in
+RAILS_ROOT/db/tokyo/RAILS_ENV/
+and has the underscored name of the given class.
+
+Table:
+use generator
+script/generate tc_tdb shortest_path
+
+
+Why i developed this (example of use): for scalable shortest path calculation.
+
+
+Todo
+=====
+
+* more elegant handling of opening and closing of file, without resorting to too much metaprogramming.
+* investigate use of Tokyo Tyrant.
+* transactions
+* cursors
+* implement other tokyo database structures (if demand)
+
+Copyright (c) 2009 [Elise Huard], released under the MIT license
