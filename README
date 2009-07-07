@@ -4,44 +4,87 @@ Tokyo-cabinet4r
 Tokyo cabinet hash plugin for Rails.
 Subclassing TokyoCabinet4r allows the easy creation and usage of some Tokyo Cabinet functionalities.
 - Tokyo Cabinet B+ tree (http://en.wikipedia.org/wiki/B%2B_tree)
-- Tokyo Cabinet table database API (arbitrary columns, usual key-value stores)
+- Tokyo Cabinet table database API (freely structured documents, like other key-value stores)
 (see http://tokyocabinet.sourceforge.net/index.html for more, but not implemented yet)
 
 Install
 ========
 Prerequisites:
 Install Tokyo Cabinet (source available at http://tokyocabinet.sourceforge.net/index.html).
-Install Tokyo Cabinet Ruby bindings (http://tokyocabinet.sourceforge.net/rubypkg/ - doc http://tokyocabinet.sourceforge.net/rubydoc/).
-(had to use build options --with-tokyocabinet-include= --with-tokyocabinet-lib= pointing to the source directory of tokyocabinet)
+UPDATE: this seems to be available as a gem on github:
+sudo gem install tokyocabinet-ruby
 
 install as a plugin for Rails.  Tested with Rails 2.3.2
 
 Example
 =======
 Btree:
+------
 use generator
 script/generate tc_bdb phone_number
 
-this creates a subclass of TokyoCabinet4r::BDB, which can be used in rails.  The db file is created in
-RAILS_ROOT/db/tokyo/RAILS_ENV/
-and has the underscored name of the given class.
+Usage:
+  new key-value
+  janes = PhoneNumber.new("jane","+32444888333")
+
+  retrieve
+  janes = PhoneNumber.get("jane")
+
+  on the instance, to update:
+  janes.update("+223222333444")
+
+  delete
+  janes.delete
+  PhoneNumber.delete("jane")
+
+  delete the whole table
+  PhoneNumber.drop
+
+Table in these examples is stored in RAILS_ROOT/db/tokyo/RAILS_ENV/phone_number.tcb
 
 Table:
+------
 use generator
 script/generate tc_tdb shortest_path
 
+Usage:
+  john = Description.new({"hair" => "black", "size" => "tall"})
 
-Why i developed this (example of use case): for scalable shortest path calculation.
+  retrieve
+  john = Description.get("john")
+
+  on the instance, to update the whole record:
+  john.update({"hair" => "red", "eyes" => "squinty"})
+
+  add or update one value:
+  john.add_data("eyes","blue") # record now {"hair" => "red", "eyes" => "blue"}
+  john.add_data("shoe_size","42") # record now {"hair" => "red","eyes" => "blue", "shoe_size" => "42"}
+
+  delete the record
+  john.delete
+  Description.delete("john")
+
+  delete table
+  Description.drop
+
+Table in these examples is stored in RAILS_ROOT/db/tokyo/RAILS_ENV/description.tct
 
 
 Todo
 =====
 
-* test with Ruby 1.9
 * more elegant handling of opening and closing of file, without resorting to too much metaprogramming.
+* add get_by_* name for the tables, similarly to find_by - use queries
+* getters and setters for attributes of tables ?
 * investigate use of Tokyo Tyrant.
 * transactions
 * cursors
 * implement other tokyo database structures (if demand)
+* explore and add extra features of the Tokyo Cabinet tables and hashes
+
+Changes:
+=======
+now using rufus-tokyo (http://github.com/jmettraux/rufus-tokyo/tree/master) to allow compatibility with several Ruby implementations (thanks jmettraux !)
 
 Copyright (c) 2009 [Elise Huard], released under the MIT license
+Made in Belgium ;)

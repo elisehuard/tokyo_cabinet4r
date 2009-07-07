@@ -1,13 +1,19 @@
 module TokyoCabinet4r
-  class TCKeyNotFound < Exception
+  class TCKeyNotFound < StandardError
   end
 
-  class TCdbIssue < Exception
+  class TCdbIssue < StandardError
   end
 
-  class TCBDBIssue < Exception
+  class TCBDBIssue < StandardError
   end 
 
-  class TCPutError < Exception
+  class TCPutError < StandardError
   end
+
+  class UnknownType < StandardError
+  end
+
+  class FileNotOpened < StandardError
+  end 
 end

@@ -1,7 +1,6 @@
 require 'rubygems'
-require 'tokyocabinet'
 require 'activesupport'
-require 'adapter'
+require 'cabinet_adapter'
 require 'connection'
 require 'errors'
 
@@ -15,10 +14,10 @@ module TokyoCabinet4r
   # It is forbidden for multible database objects in a process to open the same database at the same time."
 
   class Bdb
-    include TokyoCabinet
+    #include TokyoCabinet
 
     cattr_accessor :connection, :instance_writer => false
-    @@connection = Adapter.new(BDB)
+    @@connection = CabinetAdapter.new(:btree)
     include Connection
 
     attr_accessor :key, :value
@@ -33,25 +32,10 @@ module TokyoCabinet4r
     # get record based on key
     def self.get(key)
       open
-      value = db.get(key)
-      close
-      value
+      returning db[key] do |result|
+        close
+      end 
     end
-
-# ponder interface for duplicate keys
-#    def self.all(key)
-#      open
-#      result = []
-#      cur = BDBCUR::new(db)
-#      cur.first
-#      while key = cur.key
-#        value = cur.val
-#        result << value unless value.nil?
-#        cur.next
-#      end
-#      close
-#      result
-#    end
 
     # completely update existing record
     # raises error if not found
@@ -66,34 +50,31 @@ module TokyoCabinet4r
     # delete an instance.  Returns true if successful.
     def delete
       open
-      result = db.out(self.key)
-      close
-      result
+      returning db.delete(self.key) do |result|
+        close
+      end
     end
 
-    # delete an instance from the class.  Returns true if successful
+    # delete an instance from the class
     def self.delete(key)
       open
-      result = db.out(key)
-      close
-      result
+      returning db.delete(key) do |result|
+        close
+      end 
     end
 
     # drop the entire table - delete the file
     def self.drop
       open
-      File.unlink(db.path)
+      delete_file  # !!! TODO this is also abstracted away to adapter
       close
     end
   protected
-    # returns false if unsuccessful
+    # returns true if successful
     def put(key,value)
       open
-      unless db.put(key,value)
-        STDERR.printf("put error: %s\n", db.errmsg(db.ecode))
-        raise TCPutError.new(db.errmsg(db.ecode))
-      end
-      close
+      db[key] = value
+      close 
     end
 
   end

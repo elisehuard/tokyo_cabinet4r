@@ -1,7 +1,6 @@
 require 'rubygems'
-require 'tokyocabinet'
 require 'activesupport'
-require 'adapter'
+require 'table_adapter'
 require 'connection'
 require File.dirname(__FILE__) + '/errors'
 
@@ -14,10 +13,9 @@ module TokyoCabinet4r
   # It is forbidden for multible database objects in a process to open the same database at the same time."
 
   class Tdb
-    include TokyoCabinet
 
     cattr_accessor :connection, :instance_writer => false
-    @@connection = Adapter.new(TDB)
+    @@connection = TableAdapter.new
     include Connection
 
     attr_accessor :key, :value
@@ -32,18 +30,14 @@ module TokyoCabinet4r
     # get record based on key
     def self.get(key)
       open
-      hash = db.get(key)
-      close
-      hash
+      returning db[key] do |hash|
+        close
+      end
     end
 
     # add key-values (column and content) to existing record
-    def add_columns(key,value)
-      open
-      unless db.putcat(key,value)
-        raise TCPutError
-      end
-      close
+    def add_data(key,value)
+      update(self.value.merge({key => value}))
     end
 
     # completely update existing record
@@ -57,27 +51,28 @@ module TokyoCabinet4r
     # delete existing record 
     def delete
       open
-      db.out(self.key)
-      close
+      returning db.delete(self.key) do |result|
+        close
+      end 
     end
 
     def self.delete(key)
       open
-      db.out(key)
-      close
+      returning db.delete(key) do |result|
+        close
+      end
     end
 
-    # truncate existing table
     def self.truncate
       open
-      db.vanish
+      db.clear
       close
     end
 
     # most final: drop the entire table - delete the file
     def self.drop
       open
-      File.unlink(db.path)
+      delete_file
       close
     end
     
@@ -86,9 +81,7 @@ module TokyoCabinet4r
     # new record (hash contains column)
     def put(key,hash)
       open
-      unless db.putkeep(key,hash)
-        raise TCPutError
-      end
+      db[key] = hash
       close
     end
 

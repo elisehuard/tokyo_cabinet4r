@@ -1,8 +1,7 @@
 require 'activesupport'
-require 'tokyocabinet'
+#require 'tokyocabinet'
 module TokyoCabinet4r
   module Connection
-
     def self.included(base)
       base.extend(ClassMethods)
       base.send :include, InstanceMethods
@@ -13,6 +12,10 @@ module TokyoCabinet4r
       # first time: access the table and put reference in class variable
       def open
         connection.open(self.class)
+      end
+
+      def access(&block)
+        connection.access(self.class,&block)
       end
 
       def close
@@ -28,21 +31,25 @@ module TokyoCabinet4r
       end
     end
     module ClassMethods
-
+      protected
       def open
         connection.open(self)
+      end
+
+      def access(&block)
+        connection.access(self,&block)
       end
 
       def close
         connection.close
       end
-      #
-      #def connection
-      #  @@connection
-      #end
 
       def db
         connection.db
+      end
+
+      def delete_file
+        connection.delete_file
       end
     end
   end

@@ -6,7 +6,7 @@ class TokyoCabinet4rTdbTest < ActiveSupport::TestCase
     context "storage" do
       should "create a storage file when creating a record the first time" do
         ph = Path.new("route",{"1"=> "2", "2"=> "3"})
-        assert File.exists?("#{RAILS_ROOT}/db/tokyo/test/path.tdb")
+        assert File.exists?("#{RAILS_ROOT}/db/tokyo/test/path.tct")
       end
     end
 
@@ -30,6 +30,12 @@ class TokyoCabinet4rTdbTest < ActiveSupport::TestCase
         assert_nil Path.get("again")
       end
 
+      should "add a field to a record" do
+        @ph = Path.new("test",{"1" => "3"})
+        @ph.add_data("3","5")
+        assert_equal Path.get("test"),{"1" => "3","3" => "5"}
+      end
+
       should "delete a value from class" do
         @ph = Path.new("again",{"1"=> "2", "2"=> "3"})
         assert Path.delete("again")
@@ -44,24 +50,15 @@ class TokyoCabinet4rTdbTest < ActiveSupport::TestCase
 
     end
 
-    context "afterwards" do
-      setup do
-        @p = Path.new("test",{"1"=> "2", "2"=> "3"})
-      end
-      should "close the btree" do
-      #  assert Path.closed
-      end
-    end
-
     should  "drop table on demand" do
       Path.new("test",{"1"=> "2", "2"=> "3"})
       Path.drop
-      assert !File.exists?("#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/path.tdb")
+      assert !File.exists?("#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/path.tct")
     end
 
     # do away with created db
     teardown do
-      db_file = "#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/path.tdb"
+      db_file = "#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/path.tct"
       File.unlink(db_file) if File.exists?(db_file)
     end
   end

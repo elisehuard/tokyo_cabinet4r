@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require 'test_helper'
 #require 'fileutils'
 
 class TokyoCabinet4rBdbTest < ActiveSupport::TestCase
@@ -6,14 +6,14 @@ class TokyoCabinet4rBdbTest < ActiveSupport::TestCase
   context "tokyo cabinet action" do
     context "storage" do
       should "create a storage file when initializing" do
-        ph = PhoneNumber.new("hello",1)
-        assert File.exists?("#{RAILS_ROOT}/db/tokyo/test/phone_number.bdb")
+        ph = PhoneNumber.new("hello","noissue")
+        assert File.exists?("#{RAILS_ROOT}/db/tokyo/test/phone_number.tcb")
       end
     end
 
     context "key-value action" do
       setup do
-        @ph = PhoneNumber.new("hello",1)
+        @ph = PhoneNumber.new("hello","toodeloo")
       end
 
       should "retrieve a value after storage" do
@@ -39,33 +39,17 @@ class TokyoCabinet4rBdbTest < ActiveSupport::TestCase
         assert_equal PhoneNumber.get("test"),"left"
       end
 
-      should "allow to close and reopen and still be there" do
-        @ph = PhoneNumber.new("really","real")
-        PhoneNumber.close
-        assert PhoneNumber.get("really"),"real"
-      end
-
-    end
-
-    context "afterwards" do
-      setup do
-        @ph = PhoneNumber.new("key",1233)
-      end
-      should "close the btree" do
-     #   assert @ph.close
-      #  find a way to test this
-      end
     end
 
     should  "drop table on demand" do
       @ph = PhoneNumber.new("key","value")
       PhoneNumber.drop
-      assert !File.exists?("#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/phone_number.bdb")
+      assert !File.exists?("#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/phone_number.tcb")
     end
 
     # do away with created db
     teardown do
-      db_file = "#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/phone_number.bdb"
+      db_file = "#{RAILS_ROOT}/db/tokyo/#{RAILS_ENV}/phone_number.tcb"
       File.unlink(db_file) if File.exists?(db_file)
     end
   end 
