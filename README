@@ -13,6 +13,8 @@ Prerequisites:
 Install Tokyo Cabinet (source available at http://tokyocabinet.sourceforge.net/index.html).
 UPDATE: this seems to be available as a gem on github:
 sudo gem install tokyocabinet-ruby
+Install rufus-tokyo (github)
+sudo gem install rufus-tokyo
 
 install as a plugin for Rails.  Tested with Rails 2.3.2
 tested with Ruby 1.8.6 en 1.9.1p129
